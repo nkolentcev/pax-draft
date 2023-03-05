@@ -3,7 +3,21 @@ version: '3.8'
 services:
   srv:
     build: .
+    env_file:
+      - .env
     ports:
       - 9000:9000
     volumes:
       - .:/usr/src/app
+  db:
+    image: postgres:15.2-alpine3.17
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - 6599:5432
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+volumes:
+  postgres-db:
