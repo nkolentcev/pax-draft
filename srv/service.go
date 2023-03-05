@@ -34,15 +34,15 @@ func makeHTTPHandlerFunc(f apiFunc) http.HandlerFunc {
 }
 
 func WriteJSON(w http.ResponseWriter, status int, v any) error {
-	w.WriteHeader(status)
 	w.Header().Add("Content-Type", "application/json")
+	w.WriteHeader(status)
 	return json.NewEncoder(w).Encode(v)
 }
 
 func (s *APIService) handleUser(w http.ResponseWriter, r *http.Request) error {
-	if r.Method == "GET" {
-		return s.handleGetUser(w, r)
-	}
+	// if r.Method == "GET" {
+	// 	return s.handleGetUser(w, r)
+	// }
 	if r.Method == "PUT" {
 		return s.handleCreateUser(w, r)
 	}
@@ -53,9 +53,9 @@ func (s *APIService) handleUser(w http.ResponseWriter, r *http.Request) error {
 }
 
 func (s *APIService) handleBoardingPass(w http.ResponseWriter, r *http.Request) error {
-	if r.Method == "GET" {
-		return s.handleCheckBoardingPass(w, r)
-	}
+	// if r.Method == "GET" {
+	// 	return s.handleCheckBoardingPass(w, r)
+	// }
 	if r.Method == "PUT" {
 		return s.handleCreateBoardingPass(w, r)
 	}
@@ -67,11 +67,20 @@ func (s *APIService) handleBoardingPass(w http.ResponseWriter, r *http.Request) 
 
 // ПОЛЬЗОВАТЕЛИ
 func (s *APIService) handleGetUser(w http.ResponseWriter, r *http.Request) error {
-	return nil
+	pin := mux.Vars(r)["pin"]
+	fmt.Println(pin)
+	return WriteJSON(w, http.StatusOK, &User{})
 }
 
 func (s *APIService) handleCreateUser(w http.ResponseWriter, r *http.Request) error {
-	return nil
+	newuser := new(CreateUserRequest)
+	err := json.NewDecoder(r.Body).Decode(newuser)
+	fmt.Println(&newuser)
+	if err != nil {
+		return WriteJSON(w, http.StatusBadRequest, ApiError{Error: err.Error()})
+	}
+
+	return WriteJSON(w, http.StatusOK, newuser)
 }
 
 func (s *APIService) handleUpdateUser(w http.ResponseWriter, r *http.Request) error {
@@ -84,7 +93,14 @@ func (s *APIService) handleCheckBoardingPass(w http.ResponseWriter, r *http.Requ
 }
 
 func (s *APIService) handleCreateBoardingPass(w http.ResponseWriter, r *http.Request) error {
-	return nil
+	newbp := new(CreateBoardPassRequest)
+	err := json.NewDecoder(r.Body).Decode(newbp)
+	fmt.Println(&newbp)
+	if err != nil {
+		return WriteJSON(w, http.StatusBadRequest, ApiError{Error: err.Error()})
+	}
+
+	return WriteJSON(w, http.StatusOK, newbp)
 }
 
 func (s *APIService) handleUpdateBoardingPass(w http.ResponseWriter, r *http.Request) error {
@@ -96,6 +112,10 @@ func (s *APIService) Run() {
 	router := mux.NewRouter()
 	router.HandleFunc("/user", makeHTTPHandlerFunc(s.handleUser))
 	router.HandleFunc("/bpas", makeHTTPHandlerFunc(s.handleBoardingPass))
+
+	router.HandleFunc("/user/{pin}", makeHTTPHandlerFunc(s.handleGetUser))
+	router.HandleFunc("/bpas/{booking}", makeHTTPHandlerFunc(s.handleCheckBoardingPass))
+
 	log.Print("api server runinig on port: ", s.listenAddr)
 	http.ListenAndServe(s.listenAddr, router)
 
