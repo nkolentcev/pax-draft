@@ -11,11 +11,13 @@ import (
 
 type APIService struct {
 	listenAddr string
+	db         *PostgresStore
 }
 
-func NewAPIService(listenAddr string) *APIService {
+func NewAPIService(listenAddr string, db *PostgresStore) *APIService {
 	return &APIService{
 		listenAddr: listenAddr,
+		db:         db,
 	}
 }
 
@@ -43,7 +45,7 @@ func (s *APIService) handleUser(w http.ResponseWriter, r *http.Request) error {
 	// if r.Method == "GET" {
 	// 	return s.handleGetUser(w, r)
 	// }
-	if r.Method == "PUT" {
+	if r.Method == "POST" {
 		return s.handleCreateUser(w, r)
 	}
 	if r.Method == "PATCH" {
@@ -56,7 +58,7 @@ func (s *APIService) handleBoardingPass(w http.ResponseWriter, r *http.Request) 
 	// if r.Method == "GET" {
 	// 	return s.handleCheckBoardingPass(w, r)
 	// }
-	if r.Method == "PUT" {
+	if r.Method == "POST" {
 		return s.handleCreateBoardingPass(w, r)
 	}
 	if r.Method == "PATCH" {

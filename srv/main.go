@@ -1,9 +1,17 @@
 package main
 
-import "log"
+import (
+	"log"
+)
 
 func main() {
+
 	log.Println("running...")
-	service := NewAPIService(":8000")
+	stor, err := NewPostgresStore()
+	if err != nil {
+		log.Fatal(err)
+	}
+	service := NewAPIService(":8000", stor)
 	service.Run()
+
 }
