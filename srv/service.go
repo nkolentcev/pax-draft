@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -70,8 +71,15 @@ func (s *APIService) handleBoardingPass(w http.ResponseWriter, r *http.Request) 
 // ПОЛЬЗОВАТЕЛИ
 func (s *APIService) handleGetUser(w http.ResponseWriter, r *http.Request) error {
 	pin := mux.Vars(r)["pin"]
-	fmt.Println(pin)
-	return WriteJSON(w, http.StatusOK, &User{})
+	pinint, err := strconv.Atoi(pin)
+	if err != nil {
+		fmt.Println(err)
+	}
+	User, err := s.db.GetUserByPin(pinint)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return WriteJSON(w, http.StatusOK, User)
 }
 
 func (s *APIService) handleCreateUser(w http.ResponseWriter, r *http.Request) error {
