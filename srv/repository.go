@@ -64,11 +64,19 @@ func (s *PostgresStore) createUserTable() {
 	s.db.Query(quuid)
 	q := `create table if not exists srv_user (
 		ID uuid DEFAULT uuid_generate_v4 (),
-		Name VARCHAR(128) NOT NULL,
+		Name VARCHAR(178) NOT NULL,
 		Number integer NOT NULL,
 		Ushcema varchar(2))`
 	_, err := s.db.Query(q)
 	if err != nil {
 		log.Fatalln(err)
 	}
+	q = `create table if not exists boardin_pass (
+		ID uuid DEFAULT uuid_generate_v4 (),
+		Name VARCHAR(178) NOT NULL,
+		Booking VARCHAR(12) NOT NULL,
+		FlightNumber VARCHAR(4),
+		TypePass VARCHAR(1),
+		
+	)`
 }
