@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:paxapp/models/user_model.dart';
 import 'package:paxapp/work_screen.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import 'dart:async';
 
@@ -19,6 +22,7 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
   String currentText = "";
   final formKey = GlobalKey<FormState>();
 
+  //late Future<UserModeller> userModeller;
   @override
   void initState() {
     errorController = StreamController<ErrorAnimationType>();
@@ -81,10 +85,18 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
                       activeFillColor: Colors.white,
                     ),
                     onCompleted: (value) {
+                      var pin = int.parse(value);
+                      GetUserByPin(pin).then(
+                          (value) => {
+                                print(value.name),
+                              }, onError: (error) {
+                        debugPrint(error);
+                      });
+                      setState(() {});
                       // -> проверка пинкода
-                      Route route =
-                          MaterialPageRoute(builder: (context) => WorkScreen());
-                      Navigator.push(context, route);
+                      // Route route =
+                      //     MaterialPageRoute(builder: (context) => WorkScreen());
+                      // Navigator.push(context, route);
                     },
                     onChanged: (value) {
                       debugPrint(value);
