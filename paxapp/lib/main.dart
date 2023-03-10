@@ -10,7 +10,13 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+          appBarTheme: AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+      )),
       home: Scaffold(
         body: Center(
           child: PinCodeScreen(),
