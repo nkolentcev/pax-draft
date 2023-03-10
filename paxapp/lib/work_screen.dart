@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paxapp/fly_screen.dart';
 
 import 'models/user_model.dart';
 
@@ -6,6 +7,13 @@ const List<Widget> zones = <Widget>[
   Text('Общая'),
   Text('Чистая'),
   Text('Портал'),
+];
+
+List<String> flightList = [
+  'KC7141',
+  'KC352',
+  'U6-2842',
+  '.список',
 ];
 
 class WorkScreen extends StatefulWidget {
@@ -18,8 +26,19 @@ class WorkScreen extends StatefulWidget {
 
 class _WorkScreenState extends State<WorkScreen> {
   final List<bool> _selectedZones = <bool>[true, false, false];
+  bool _swap = false;
   @override
   Widget build(BuildContext context) {
+    Widget swqpWidget = new Container();
+    if (_swap) {
+      swqpWidget = new Text("Рейс можно выбрать в зоне портала");
+    } else {
+      swqpWidget = FLyScreen(flightList);
+    }
+    var swapTile = new ListTile(
+      title: swqpWidget,
+    );
+
     return Scaffold(
       appBar: AppBar(),
       body: Container(
@@ -44,7 +63,7 @@ class _WorkScreenState extends State<WorkScreen> {
                 child: Column(
                   children: <Widget>[
                     Text('Рабочая зона'),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     ToggleButtons(
                       direction: Axis.horizontal,
                       onPressed: (int index) {
@@ -52,6 +71,11 @@ class _WorkScreenState extends State<WorkScreen> {
                           // The button that is tapped is set to true, and the others to false.
                           for (int i = 0; i < _selectedZones.length; i++) {
                             _selectedZones[i] = i == index;
+                          }
+                          if (index == 2) {
+                            _swap = false;
+                          } else {
+                            _swap = true;
                           }
                         });
                       },
@@ -69,12 +93,8 @@ class _WorkScreenState extends State<WorkScreen> {
                     ),
                   ],
                 )),
-            const SizedBox(height: 20),
-            Expanded(
-                flex: 8,
-                child: Container(
-                  color: Colors.blue,
-                ))
+            const SizedBox(height: 10),
+            Expanded(flex: 8, child: swapTile)
           ],
         ),
       ),
