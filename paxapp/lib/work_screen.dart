@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 
-class WorkScreen extends StatefulWidget {
-  const WorkScreen({super.key});
+import 'models/user_model.dart';
 
-  @override
-  State<WorkScreen> createState() => _WorkScreenState();
-}
+class WorkScreen extends StatelessWidget {
+  final Users user;
+  WorkScreen({super.key, required this.user});
 
-class _WorkScreenState extends State<WorkScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        centerTitle: true,
+        title: Text('${this.user.name}'),
+      ),
+    );
   }
 }

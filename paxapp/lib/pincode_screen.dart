@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:paxapp/models/user_model.dart';
 import 'package:paxapp/work_screen.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'dart:convert';
 
 import 'dart:async';
@@ -86,17 +86,8 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
                     ),
                     onCompleted: (value) {
                       var pin = int.parse(value);
-                      GetUserByPin(pin).then(
-                          (value) => {
-                                print(value.name),
-                              }, onError: (error) {
-                        debugPrint(error);
-                      });
+                      login(context, value);
                       setState(() {});
-                      // -> проверка пинкода
-                      // Route route =
-                      //     MaterialPageRoute(builder: (context) => WorkScreen());
-                      // Navigator.push(context, route);
                     },
                     onChanged: (value) {
                       debugPrint(value);
@@ -108,5 +99,28 @@ class _PinCodeScreenState extends State<PinCodeScreen> {
             ],
           ),
         ));
+  }
+}
+
+void login(BuildContext context, String pincode) async {
+  try {
+    Response response = await get(
+      Uri.parse("http://213.27.32.24:8000/user/" + pincode),
+    );
+    if (response.statusCode == 200) {
+      var userdata = jsonDecode(response.body.toString());
+      Users user = Users(
+          id: userdata['id'],
+          name: userdata['name'],
+          number: userdata['number'],
+          uschema: userdata['uschema']);
+      Route route =
+          MaterialPageRoute(builder: (context) => WorkScreen(user: user));
+      Navigator.push(context, route);
+    } else {
+      debugPrint("unable to connect");
+    }
+  } catch (e) {
+    debugPrint(e.toString());
   }
 }
