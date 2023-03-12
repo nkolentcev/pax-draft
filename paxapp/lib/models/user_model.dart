@@ -34,7 +34,7 @@ class Users {
 }
 
 Future<Users> GetUserByPin(int pin) async {
-  var url = Uri.parse("http://213.27.32.24:8000/user/" + pin.toString());
+  var url = Uri.parse(***" + pin.toString());
   var response = await http.get(url);
   if (response.statusCode == 200) {
     return Users.fromJson(json.decode(response.body));
