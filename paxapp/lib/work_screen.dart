@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:paxapp/fly_screen.dart';
+import 'package:paxapp/qr_scaner.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models/user_model.dart';
+import 'qr_scaner_tmp.dart';
 
 const List<Widget> zones = <Widget>[
   Text('Общая'),
   Text('Чистая'),
-  Text('Портал'),
+  Text('Накопитель'),
+  // Text('?? БОРТ ??'),
 ];
 
 List<String> flightList = [
   'KC7141',
   'KC352',
   'U6-2842',
-  '.список',
+  'U0-БОРТ 1',
+  '.VIP',
 ];
 
 class WorkScreen extends StatefulWidget {
@@ -26,12 +31,45 @@ class WorkScreen extends StatefulWidget {
 
 class _WorkScreenState extends State<WorkScreen> {
   final List<bool> _selectedZones = <bool>[true, false, false];
-  bool _swap = false;
+  bool _swap = true;
+  String _ssid = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _ssid = (prefs.getString('uschema') ?? "");
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget swqpWidget = new Container();
     if (_swap) {
-      swqpWidget = new Text("Рейс можно выбрать в зоне портала");
+      swqpWidget = new Center(
+        child: Column(children: [
+          Center(child: Text("Рейс можно выбрать в зоне портала")),
+          ElevatedButton(
+              onPressed: () {
+                Route route =
+                    MaterialPageRoute(builder: (context) => QRScaner());
+                Navigator.push(context, route);
+              },
+              child: Center(child: Text("-> сканирование"))),
+          ElevatedButton(
+              onPressed: () {
+                Route route =
+                    MaterialPageRoute(builder: (context) => QRScanerTMP());
+                Navigator.push(context, route);
+              },
+              child: Center(child: Text("-> технический (временно)")))
+        ]),
+      );
     } else {
       swqpWidget = FLyScreen(flightList);
     }
@@ -51,9 +89,13 @@ class _WorkScreenState extends State<WorkScreen> {
                 child: Container(
                   width: double.infinity,
                   child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text('${widget.user.name}'),
+                    child: Column(
+                      children: <Widget>[
+                        ListTile(
+                            leading: Icon(Icons.alarm),
+                            title: Text(widget.user.name),
+                            subtitle: Text('$_ssid')),
+                      ],
                     ),
                   ),
                 )),

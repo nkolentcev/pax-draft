@@ -18,22 +18,30 @@ class _FLyScreenState extends State<FLyScreen> {
       selectedValue = widget.flightList.first;
     }
 
-    return ListView.builder(
-      itemBuilder: (ctx, index) {
+    return Container(
+        child: GridView.builder(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3, crossAxisSpacing: 12, mainAxisSpacing: 12),
+      itemCount: widget.flightList.length,
+      itemBuilder: (context, index) {
         return Container(
-          child: Row(
-            children: [
-              Radio(
-                  value: widget.flightList[index],
-                  groupValue: selectedValue,
-                  onChanged: (s) {}),
-              Text(widget.flightList[index])
-            ],
+          decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(Radius.circular(12)),
+              border: Border.all(color: Color.fromARGB(255, 204, 195, 195))),
+          child: ListTile(
+            title: Center(
+              child: Text(
+                '${widget.flightList[index]}',
+                style: TextStyle(fontSize: 14),
+              ),
+            ),
+            onTap: () {
+              print('${widget.flightList[index]}');
+            },
           ),
         );
       },
-      itemCount: widget.flightList.length,
-    );
+    ));
   }
 }
 

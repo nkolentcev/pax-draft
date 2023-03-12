@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:paxapp/pincode_screen.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  var box = await Hive.openBox('userdata');
+
   runApp(const MainApp());
 }
 

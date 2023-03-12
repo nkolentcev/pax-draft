@@ -4,6 +4,8 @@ import 'package:paxapp/work_screen.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'dart:async';
 
@@ -17,6 +19,8 @@ class PinCodeScreen extends StatefulWidget {
 class _PinCodeScreenState extends State<PinCodeScreen> {
   TextEditingController textEditingController = TextEditingController();
   StreamController<ErrorAnimationType>? errorController;
+  String _username = "";
+  String _ssid = "";
 
   bool hasError = false;
   String currentText = "";
@@ -114,6 +118,9 @@ void login(BuildContext context, String pincode) async {
           name: userdata['name'],
           number: userdata['number'],
           uschema: userdata['uschema']);
+      //hive
+      _initUserData(user);
+      //hive
       Route route =
           MaterialPageRoute(builder: (context) => WorkScreen(user: user));
       Navigator.push(context, route);
@@ -123,4 +130,11 @@ void login(BuildContext context, String pincode) async {
   } catch (e) {
     debugPrint(e.toString());
   }
+}
+
+Future<void> _initUserData(Users user) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString("username", user.name);
+  prefs.setString("ssid", user.id);
+  prefs.setString("uschema", user.uschema);
 }
